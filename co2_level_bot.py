@@ -60,7 +60,7 @@ def send_co2_message(co2_level, location):
         "type": "stream",
         "to": stream,
         "topic": f"CO2 level - {location}",
-        "content": f"CO2 level on the 4th floor is currently {round(co2_level)}"
+        "content": f"CO2 level on the {location} is currently {round(co2_level)}"
     }
 
     result = client.send_message(request)
