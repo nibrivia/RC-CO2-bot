@@ -6,7 +6,6 @@ import zulip
 
 DEBUG = True
 LOCATIONS = {"60:C0:BF:48:1C:84": "4th floor", "60:C0:BF:46:F6:E6": "5th floor"}
-client = zulip.Client(config_file="~/.zuliprc")
 
 
 def should_send_message(co2_level, location):
@@ -77,8 +76,10 @@ def parse_single_reading(co2_string):
         [k, value] = line.split(":", 1)
         reading[k.strip()] = value.strip()
 
+    # TODO nicely parse the rest of the reading
     if "CO2" in reading:
         reading["CO2"] = float(reading["CO2"].split()[0])
+
     return reading
 
 
@@ -88,11 +89,9 @@ def parse_co2_string(co2_string):
 
     co2_string = "\n".join(lines)
     readings = [parse_single_reading(s) for s in co2_string.split("=======================================")]
-    print(readings)
 
     levels = dict()
     for r in readings:
-        print(r)
         if "Address" not in r:
             continue
 
@@ -101,12 +100,12 @@ def parse_co2_string(co2_string):
             continue
 
         levels[LOCATIONS[device_mac]] = r["CO2"]
-        print("levels", levels)
 
     return levels
 
 
 if __name__ == "__main__":
+    client = zulip.Client(config_file="~/.zuliprc")
     if not DEBUG:
         co2_string = sys.stdin.read()
     else:
@@ -117,8 +116,5 @@ if __name__ == "__main__":
     print(f"{len(co2_levels)} locations found")
 
     for location, level in co2_levels.items():
-        print(f"Current CO2 level in {location} :\n{level}")
-        if level > 900:
-            send_co2_message(level, location)
-        else:
-            print(f"CO2 level is low enough ({level}), not sending a message")
+        print(f"\n{location}: {level} ppm CO2")
+        send_co2_message(level, location)
