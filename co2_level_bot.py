@@ -11,7 +11,7 @@ LOCATIONS = {"60:C0:BF:48:1C:84": "4th floor", "60:C0:BF:46:F6:E6": "5th floor"}
 def should_send_message(co2_level, location):
     # Don't send a message if the level is low enough
     if co2_level < 1000:
-        print("CO2 levels are not okay enough")
+        print("CO2 levels are okay enough")
         return False
 
     stream = "397 Bridge"
