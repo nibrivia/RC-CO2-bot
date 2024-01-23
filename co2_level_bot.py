@@ -41,7 +41,7 @@ def should_send_message(co2_level, location):
 
     # Don't send a message if we sent one <15 minutes ago
     if duration_since_last_message_min < 125:
-        print("We already sent a message in the last 15 minutes, skipping")
+        print("We already sent a message in the last 125 minutes, skipping")
         return False
 
     return True
