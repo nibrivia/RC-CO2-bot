@@ -4,7 +4,7 @@ from typing import Any, Dict
 import zulip
 
 
-DEBUG = True
+DEBUG = False
 LOCATIONS = {"60:C0:BF:48:1C:84": "4th floor", "60:C0:BF:46:F6:E6": "5th floor"}
 
 
