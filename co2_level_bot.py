@@ -1,4 +1,6 @@
 import sys
+import os
+import requests
 from datetime import datetime
 from typing import Any, Dict
 import zulip
@@ -6,6 +8,7 @@ import zulip
 
 DEBUG = False
 LOCATIONS = {"60:C0:BF:48:1C:84": "4th floor", "60:C0:BF:46:F6:E6": "5th floor"}
+STREAMS = {"4th floor": "co2-4th-floor", "5th floor": "co2-5th-floor"}
 
 
 def should_send_message(co2_level, location):
@@ -104,6 +107,18 @@ def parse_co2_string(co2_string):
     return levels
 
 
+def log_co2_level(level: int, location: str):
+    if location not in STREAMS:
+        return
+
+    try:
+        url = f"https://io.adafruit.com/api/v2/nibrivia/feeds/{STREAMS[location]}/data"
+        header = {"X-AIO-KEY": os.getenv("AIO_KEY")}
+        requests.post(url, headers=header, data={"value": level})
+    except:
+        pass
+
+
 if __name__ == "__main__":
     client = zulip.Client(config_file="~/.zuliprc")
     if not DEBUG:
@@ -118,3 +133,4 @@ if __name__ == "__main__":
     for location, level in co2_levels.items():
         print(f"\n{location}: {level} ppm CO2")
         send_co2_message(level, location)
+        log_co2_level(level, location)
